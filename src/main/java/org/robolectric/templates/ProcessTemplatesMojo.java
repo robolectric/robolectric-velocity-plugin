@@ -31,23 +31,23 @@ public class ProcessTemplatesMojo extends AbstractMojo {
   private MavenProject project;
 
   @Parameter(defaultValue = "${project.build.directory}")
-  private File outputDirectory;
+  private File output;
 
   @Parameter(required = true, readonly = true)
-  private Integer apiLevel;
+  private Integer api;
 
   @Parameter(required = true, readonly = true)
-  private FileSet templateFiles;
+  private FileSet fileset;
 
   public void execute() throws MojoExecutionException {
     try {
       Velocity.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM, new LogHandler(this));
-      Velocity.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, project.getBasedir().getAbsolutePath());
+      Velocity.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, fileset.getDirectory());
       Velocity.init();
 
       VelocityContext context = new VelocityContext();
-      context.put("apiLevel", apiLevel);
-      if (apiLevel >= 21) {
+      context.put("api", api);
+      if (api >= 21) {
         context.put("ptrClass", "long");
         context.put("ptrClassBoxed", "Long");
       } else {
@@ -68,7 +68,7 @@ public class ProcessTemplatesMojo extends AbstractMojo {
     final FileSetManager manager = new FileSetManager();
 
     final List<File> files = new ArrayList<>();
-    for (String file : manager.getIncludedFiles(templateFiles)) {
+    for (String file : manager.getIncludedFiles(fileset)) {
       files.add(new File(file));
     }
 
@@ -77,14 +77,14 @@ public class ProcessTemplatesMojo extends AbstractMojo {
 
   private void processTemplate(VelocityContext context, File file) throws VelocityException, MojoExecutionException, IOException {
     try {
-      final File inputFile = new File(templateFiles.getDirectory(), file.getPath());
+      final File inputFile = new File(file.getPath());
       getLog().debug("Input file: " + inputFile.getPath());
 
       final StringWriter sw = new StringWriter();
       Template template = Velocity.getTemplate(inputFile.getPath(), "UTF-8");
       template.merge(context, sw);
 
-      final File outputFile = new File(outputDirectory.getAbsoluteFile(), file.getPath().replace(templateFiles.getDirectory(), "").replace(".vm", ""));
+      final File outputFile = new File(output.getAbsoluteFile(), file.getPath().replace(fileset.getDirectory(), "").replace(".vm", ""));
       getLog().debug("Output file: " + outputFile.getPath());
 
       outputFile.getParentFile().mkdirs();
