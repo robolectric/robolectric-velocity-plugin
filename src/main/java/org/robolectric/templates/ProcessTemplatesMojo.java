@@ -43,7 +43,6 @@ public class ProcessTemplatesMojo extends AbstractMojo {
     try {
       Velocity.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM, new LogHandler(this));
       Velocity.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, project.getBasedir().getAbsolutePath());
-
       Velocity.init();
 
       VelocityContext context = new VelocityContext();
@@ -97,21 +96,5 @@ public class ProcessTemplatesMojo extends AbstractMojo {
     } catch (Exception e) {
       throw new MojoExecutionException("Error processing template file: " + file.getAbsolutePath() + ": " + e);
     }
-  }
-
-  public void setProject(MavenProject project) {
-    this.project = project;
-  }
-
-  public void setApiLevel(Integer apiLevel) {
-    this.apiLevel = apiLevel;
-  }
-
-  public void setOutputDirectory(File outputDirectory) {
-    this.outputDirectory = outputDirectory;
-  }
-
-  public void setTemplateFiles(FileSet templateFiles) {
-    this.templateFiles = templateFiles;
   }
 }

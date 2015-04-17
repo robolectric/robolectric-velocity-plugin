@@ -4,28 +4,30 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.log.LogChute;
 
+/**
+ * Logging adapter for Velocity.
+ */
 public class LogHandler implements LogChute {
   private final AbstractMojo mojo;
 
-  public LogHandler(AbstractMojo velocityMojo) {
-    this.mojo = velocityMojo;
+  public LogHandler(AbstractMojo mojo) {
+    this.mojo = mojo;
   }
 
   public void init(RuntimeServices runtimeServices) throws Exception {
   }
 
   public boolean isLevelEnabled(int level) {
-    boolean enabled = false;
-    if (level == DEBUG_ID && mojo.getLog().isDebugEnabled())
-      enabled = true;
-    else if (level == INFO_ID && mojo.getLog().isInfoEnabled())
-      enabled = true;
-    else if (level == WARN_ID && mojo.getLog().isWarnEnabled())
-      enabled = true;
-    else if (level == ERROR_ID && mojo.getLog().isErrorEnabled())
-      enabled = true;
-
-    return enabled;
+    if (level == DEBUG_ID && mojo.getLog().isDebugEnabled()) {
+      return true;
+    } else if (level == INFO_ID && mojo.getLog().isInfoEnabled()) {
+      return true;
+    } else if (level == WARN_ID && mojo.getLog().isWarnEnabled()) {
+      return true;
+    } else if (level == ERROR_ID && mojo.getLog().isErrorEnabled()) {
+      return true;
+    }
+    return false;
   }
 
   public void log(int level, String content) {
@@ -43,7 +45,6 @@ public class LogHandler implements LogChute {
         case ERROR_ID:
           mojo.getLog().error(content);
           break;
-        default:
       }
   }
 
@@ -62,7 +63,6 @@ public class LogHandler implements LogChute {
         case ERROR_ID:
           mojo.getLog().error(content, throwable);
           break;
-        default:
       }
   }
 }
