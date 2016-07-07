@@ -2,6 +2,10 @@
 
 A Maven plugin that processes velocity templates for use with Robolectric's shadows.
 
+## Deprecated
+
+With the switch from `maven` to `gradle` for building Robolectric, this plugin is no used.
+
 ## License
 
     Copyright 2015 Pivotal Labs
